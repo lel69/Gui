@@ -1,0 +1,226 @@
+-- Credits to Boi#5676
+local hook = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hook/main/hook"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hi/main/lib"))()
+local venyx = library.new("The Lift Gui", 5013109572)
+local page = venyx:addPage("Main", 0)
+local section1 = page:addSection("Player")
+local section2 = page:addSection("Misc")
+
+section1:addButton("God Mode", function()
+    local fall_dmg = game:GetService("Players").LocalPlayer:FindFirstChild("RemoteEvent")
+local nan = 0/0
+
+if fall_dmg then
+   fall_dmg.FireServer(fall_dmg, "FallDamage", nan)
+end
+print("Godded")
+end)
+
+section1:addButton("No FallDamage", function()
+    local mt = getrawmetatable(game)
+make_writeable(mt)
+local namecall = mt.__namecall
+mt.__namecall = newcclosure(function(self, ...)
+    local meth = getnamecallmethod()
+    local args = {...}
+    if meth == "FireServer" and args[1] == "FallDamage" then
+        return
+    end
+    return namecall(self, ...)
+end)
+print("NoFallDamage")
+end)
+
+
+section1:addButton("NoHunger", function()
+    workspace.Live[game.Players.LocalPlayer.Name].Hunger:Destroy()
+end)
+
+
+section1:addButton("NoFatigue", function()
+    workspace.Live[game.Players.LocalPlayer.Name].Fatigue:Destroy()
+end)
+
+
+section1:addToggle("AutoFarm", nil, function(value)
+        _G.Loopname = value
+    while _G.Loopname do
+    wait(0.02)
+    local args = {
+    [1] = "PushUp" }
+game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(unpack(args))
+        end
+end)
+
+section1:addSlider("WalkSpeed", 16, 16, 500, function(value)
+    game.Players.LocalPlayer.Character.Humanoid:AddGetHook("WalkSpeed",16)
+    game.Players.LocalPlayer.Character.Humanoid:AddSetHook("WalkSpeed")
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+end)
+
+section1:addSlider("JumpPower", 50, 50, 500, function(value)
+    game.Players.LocalPlayer.Character.Humanoid:AddGetHook("JumpPower",50)
+    game.Players.LocalPlayer.Character.Humanoid:AddSetHook("JumpPower")
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+end)
+
+section2:addButton("ServerHop", function()
+                    local x = {}
+	                for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
+         		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+            			x[#x + 1] = v.id
+            		end
+            	end
+            	if #x > 0 then
+            		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+            	else
+            		return print("Couldn't find a server")
+            	end
+end)
+section2:addButton("JoinSmallestServer", function()
+    local function js(i)return game:GetService("HttpService"):JSONDecode(i)end
+
+local index = 0
+local maxplrs = 30
+local lowestID
+while index do
+    if index == 0 then index = "" end
+    local res = syn.request{
+        Url = "https://games.roblox.com/v1/games/"..tostring(game.PlaceId).."/servers/Public?sortOrder=Asc&limit=100&cursor="..index,
+        Method = "GET"
+    }
+    for i,v in next, js(res.Body).data do
+        if v.playing < maxplrs then
+            maxplrs = v.playing
+            print(maxplrs)
+            lowestID = v.id
+        end
+    end
+    index = js(res.Body).nextPageCursor
+    wait()
+end
+wait()
+game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,tostring(lowestID))
+end)
+
+section2:addButton("FpsBoost", function()
+-- not mine found it in #scripts-channel but seems useful    
+local decalsyeeted = true -- Leaving this on makes games look shitty but the fps goes up by at least 20.
+local g = game
+local w = g.Workspace
+local l = g.Lighting
+local t = w.Terrain
+t.WaterWaveSize = 0
+t.WaterWaveSpeed = 0
+t.WaterReflectance = 0
+t.WaterTransparency = 0
+l.GlobalShadows = false
+l.FogEnd = 9e9
+l.Brightness = 0
+settings().Rendering.QualityLevel = "Level01"
+for i, v in pairs(g:GetDescendants()) do
+    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+        v.Material = "Plastic"
+        v.Reflectance = 0
+    elseif v:IsA("Decal") or v:IsA("Texture") and decalsyeeted then
+        v.Transparency = 1
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+        v.Lifetime = NumberRange.new(0)
+    elseif v:IsA("Explosion") then
+        v.BlastPressure = 1
+        v.BlastRadius = 1
+    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+        v.Enabled = false
+    elseif v:IsA("MeshPart") then
+        v.Material = "Plastic"
+        v.Reflectance = 0
+        v.TextureID = 10385902758728957
+    end
+end
+for i, e in pairs(l:GetChildren()) do
+    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
+        e.Enabled = false
+    end
+end
+end)
+
+section2:addButton("ChatSpy", function()
+    -- not mine
+    --This script reveals ALL hidden messages in the default chat
+--chat "/MagmaHacks" to toggle!
+enabled = true
+--if true will check your messages too
+spyOnMyself = false
+--if true will chat the logs publicly (fun, risky)
+public = false
+--if true will use /me to stand out
+publicItalics = true
+--customize private logs
+privateProperties = {
+	Color = Color3.fromRGB(0,255,255); 
+	Font = Enum.Font.SourceSansBold;
+	TextSize = 18;
+}
+--////////////////////////////////////////////////////////////////
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait() or Players.LocalPlayer
+local saymsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
+local getmsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("OnMessageDoneFiltering")
+local instance = (_G.chatSpyInstance or 0) + 1
+_G.chatSpyInstance = instance
+
+local function onChatted(p,msg)
+	if _G.chatSpyInstance == instance then
+		if p==player and msg:lower():sub(1,4)=="/MagmaHacks" then
+			enabled = not enabled
+			wait(0.3)
+			privateProperties.Text = "{SPY "..(enabled and "EN" or "DIS").."ABLED}"
+			StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+		elseif enabled and (spyOnMyself==true or p~=player) then
+			msg = msg:gsub("[\n\r]",''):gsub("\t",' '):gsub("[ ]+",' ')
+			local hidden = true
+			local conn = getmsg.OnClientEvent:Connect(function(packet,channel)
+				if packet.SpeakerUserId==p.UserId and packet.Message==msg:sub(#msg-#packet.Message+1) and (channel=="All" or (channel=="Team" and public==false and Players[packet.FromSpeaker].Team==player.Team)) then
+					hidden = false
+				end
+			end)
+			wait(1)
+			conn:Disconnect()
+			if hidden and enabled then
+				if public then
+					saymsg:FireServer((publicItalics and "/me " or '').."{SPY} [".. p.Name .."]: "..msg,"All")
+				else
+					privateProperties.Text = "{SPY} [".. p.Name .."]: "..msg
+					StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+				end
+			end
+		end
+	end
+end
+
+for _,p in ipairs(Players:GetPlayers()) do
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end
+Players.PlayerAdded:Connect(function(p)
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end)
+privateProperties.Text = "{SPY "..(enabled and "EN" or "DIS").."ABLED}"
+StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+if not player.PlayerGui:FindFirstChild("Chat") then wait(3) end
+local chatFrame = player.PlayerGui.Chat.Frame
+chatFrame.ChatChannelParentFrame.Visible = true
+chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Position+UDim2.new(UDim.new(),chatFrame.ChatChannelParentFrame.Size.Y)
+end)
+
+local Settings = venyx:addPage("Settings", 0)
+local abc = Settings:addSection("KeyBind")
+abc:addKeybind("Open/Close KeyBind", Enum.KeyCode.LeftAlt, function()
+    venyx:toggle()
+end)
+
+abc:addButton("Delete Gui" , function()
+    game:GetService("CoreGui")["The Lift Gui"]:Destroy();
+end)
+
+venyx:SelectPage(venyx.pages[1], true)
