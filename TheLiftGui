@@ -1,6 +1,6 @@
 local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/lel69/hook/main/vapeuiverysexy")()
 local hook = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hook/main/hook"))()
-
+loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/Gui/main/bypass"))()
 local playerlist = {}
 
 for i,v in pairs(game.Players:GetPlayers())do
@@ -8,17 +8,6 @@ for i,v in pairs(game.Players:GetPlayers())do
         table.insert(playerlist,v.Name)
     end
 end
-
-local OldNameCall 
-OldNameCall = hookmetamethod(game, "__namecall", function(self,...) 
-    local args = {...}
-    if args[1] == "CheckTP" and getnamecallmethod() == "InvokeServer" then
-        args[1] = "CheckTP"
-        args[2] = wait()
-    end
-
-    return OldNameCall(self,...)
-end)
 
 local win = lib:Window("The Lift Gui                                                                                                            LeftAlt to Open/Close",Color3.fromRGB(44, 120, 224), Enum.KeyCode.LeftAlt)
 local tab = win:Tab("Main")
