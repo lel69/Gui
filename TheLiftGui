@@ -3,7 +3,7 @@ local hook = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/ho
 
 game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.Started then
-        syn.queue_on_teleport("https://raw.githubusercontent.com/lel69/Gui/main/TheLiftGui'))()")
+        syn.queue_on_teleport("loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/Gui/main/TheLiftGui"))()")
     end
 end)
 
