@@ -1,12 +1,6 @@
 local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/lel69/hook/main/vapeuiverysexy")()
 local hook = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hook/main/hook"))()
 
-game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
-    if State == Enum.TeleportState.Started then
-        syn.queue_on_teleport("loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/Gui/main/TheLiftGui"))()")
-    end
-end)
-
 local playerlist = {}
 
 for i,v in pairs(game.Players:GetPlayers())do
