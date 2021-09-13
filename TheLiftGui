@@ -1,23 +1,49 @@
--- Credits to Boi#5676
+local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/lel69/hook/main/vapeuiverysexy")()
 local hook = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hook/main/hook"))()
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/lel69/hi/main/lib"))()
-local venyx = library.new("The Lift Gui", 5013109572)
-local page = venyx:addPage("Main", 0)
-local section1 = page:addSection("Player")
-local section2 = page:addSection("Misc")
 
-section1:addButton("God Mode", function()
-    local fall_dmg = game:GetService("Players").LocalPlayer:FindFirstChild("RemoteEvent")
+game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
+    if State == Enum.TeleportState.Started then
+        syn.queue_on_teleport("https://raw.githubusercontent.com/lel69/Gui/main/TheLiftGui'))()")
+    end
+end)
+
+local playerlist = {}
+
+for i,v in pairs(game.Players:GetPlayers())do
+    if v ~= game.Players.LocalPlayer then
+        table.insert(playerlist,v.Name)
+    end
+end
+
+local OldNameCall 
+OldNameCall = hookmetamethod(game, "__namecall", function(self,...) 
+    local args = {...}
+    if args[1] == "CheckTP" and getnamecallmethod() == "InvokeServer" then
+        args[1] = "CheckTP"
+        args[2] = wait()
+    end
+
+    return OldNameCall(self,...)
+end)
+
+local win = lib:Window("The Lift Gui                                                                                                            LeftAlt to Open/Close",Color3.fromRGB(44, 120, 224), Enum.KeyCode.LeftAlt)
+local tab = win:Tab("Main")
+
+tab:Toggle("God Mode",false, function(hmm)
+_G.a = hmm
+while _G.a do
+local fall_dmg = game:GetService("Players").LocalPlayer:FindFirstChild("RemoteEvent")
 local nan = 0/0
 
 if fall_dmg then
    fall_dmg.FireServer(fall_dmg, "FallDamage", nan)
 end
-print("Godded")
+wait(2)
+end
 end)
 
-section1:addButton("No FallDamage", function()
-    local mt = getrawmetatable(game)
+tab:Button("NoFallDamage", function()
+local mt = getrawmetatable(game)
 make_writeable(mt)
 local namecall = mt.__namecall
 mt.__namecall = newcclosure(function(self, ...)
@@ -28,44 +54,96 @@ mt.__namecall = newcclosure(function(self, ...)
     end
     return namecall(self, ...)
 end)
-print("NoFallDamage")
 end)
 
-
-section1:addButton("NoHunger", function()
-    workspace.Live[game.Players.LocalPlayer.Name].Hunger:Destroy()
-end)
-
-
-section1:addButton("NoFatigue", function()
-    workspace.Live[game.Players.LocalPlayer.Name].Fatigue:Destroy()
-end)
-
-
-section1:addToggle("AutoFarm", nil, function(value)
-        _G.Loopname = value
-    while _G.Loopname do
-    wait(0.02)
-    local args = {
-    [1] = "PushUp" }
-game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(unpack(args))
-        end
-end)
-
-section1:addSlider("WalkSpeed", 16, 16, 500, function(value)
+tab:Slider("WalkSpeed",16,500,0, function(ws)
     game.Players.LocalPlayer.Character.Humanoid:AddGetHook("WalkSpeed",16)
     game.Players.LocalPlayer.Character.Humanoid:AddSetHook("WalkSpeed")
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
 end)
 
-section1:addSlider("JumpPower", 50, 50, 500, function(value)
+tab:Slider("JumpPower",50,500,0,function(jp)
     game.Players.LocalPlayer.Character.Humanoid:AddGetHook("JumpPower",50)
     game.Players.LocalPlayer.Character.Humanoid:AddSetHook("JumpPower")
-    game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = jp
 end)
 
-section2:addButton("ServerHop", function()
-                    local x = {}
+tab:Toggle("AutoFarm", false, function(val)
+_G.Loopname = val
+while _G.Loopname do
+wait(0.02)
+local args = {
+[1] = "PushUp" }
+game:GetService("Players").LocalPlayer.RemoteEvent:FireServer(unpack(args))
+end
+end)
+
+
+tab:Button("Chat", function(idk)
+    enabled = true
+    
+    privateProperties = {
+	Color = Color3.fromRGB(0,255,255); 
+	Font = Enum.Font.SourceSansBold;
+	TextSize = 18;
+}
+
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait() or Players.LocalPlayer
+local saymsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
+local getmsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("OnMessageDoneFiltering")
+local instance = (_G.chatSpyInstance or 0) + 1
+_G.chatSpyInstance = instance
+
+local function onChatted(p,msg)
+	if _G.chatSpyInstance == instance then
+		if p==player and msg:lower():sub(1,4)=="/MagmaHacks" then
+			enabled = not enabled
+			wait(0.3)
+			StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+		elseif enabled and (spyOnMyself==true or p~=player) then
+			msg = msg:gsub("[\n\r]",''):gsub("\t",' '):gsub("[ ]+",' ')
+			local hidden = true
+			local conn = getmsg.OnClientEvent:Connect(function(packet,channel)
+				if packet.SpeakerUserId==p.UserId and packet.Message==msg:sub(#msg-#packet.Message+1) and (channel=="All" or (channel=="Team" and public==false and Players[packet.FromSpeaker].Team==player.Team)) then
+					hidden = false
+				end
+			end)
+			wait(1)
+			conn:Disconnect()
+			if hidden and enabled then
+				if public then
+					saymsg:FireServer((publicItalics and "/me " or '').."{SPY} [".. p.Name .."]: "..msg,"All")
+				else
+					StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+				end
+			end
+		end
+	end
+end
+
+for _,p in ipairs(Players:GetPlayers()) do
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end
+Players.PlayerAdded:Connect(function(p)
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end)
+StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+if not player.PlayerGui:FindFirstChild("Chat") then wait(3) end
+local chatFrame = player.PlayerGui.Chat.Frame
+chatFrame.ChatChannelParentFrame.Visible = true
+chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Position+UDim2.new(UDim.new(),chatFrame.ChatChannelParentFrame.Size.Y)
+end)
+
+local ttt = win:Tab("Server")
+
+ttt:Button("Rejoin", function()
+game:GetService("TeleportService"):Teleport(game.PlaceId, player)
+end)
+
+ttt:Button("ServerHop", function()
+                        local x = {}
 	                for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
          		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
             			x[#x + 1] = v.id
@@ -77,8 +155,9 @@ section2:addButton("ServerHop", function()
             		return print("Couldn't find a server")
             	end
 end)
-section2:addButton("JoinSmallestServer", function()
-    local function js(i)return game:GetService("HttpService"):JSONDecode(i)end
+
+ttt:Button("JoinSmallestServer", function()
+        local function js(i)return game:GetService("HttpService"):JSONDecode(i)end
 
 local index = 0
 local maxplrs = 30
@@ -103,124 +182,116 @@ wait()
 game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,tostring(lowestID))
 end)
 
-section2:addButton("FpsBoost", function()
--- not mine found it in #scripts-channel but seems useful    
-local decalsyeeted = true -- Leaving this on makes games look shitty but the fps goes up by at least 20.
-local g = game
-local w = g.Workspace
-local l = g.Lighting
-local t = w.Terrain
-t.WaterWaveSize = 0
-t.WaterWaveSpeed = 0
-t.WaterReflectance = 0
-t.WaterTransparency = 0
-l.GlobalShadows = false
-l.FogEnd = 9e9
-l.Brightness = 0
-settings().Rendering.QualityLevel = "Level01"
-for i, v in pairs(g:GetDescendants()) do
-    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
-        v.Material = "Plastic"
-        v.Reflectance = 0
-    elseif v:IsA("Decal") or v:IsA("Texture") and decalsyeeted then
-        v.Transparency = 1
-    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-        v.Lifetime = NumberRange.new(0)
-    elseif v:IsA("Explosion") then
-        v.BlastPressure = 1
-        v.BlastRadius = 1
-    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
-        v.Enabled = false
-    elseif v:IsA("MeshPart") then
-        v.Material = "Plastic"
-        v.Reflectance = 0
-        v.TextureID = 10385902758728957
+local ass = win:Tab("Teleports")
+
+ass:Button("Teleport to Dealer", function()
+local assing = game:GetService("Workspace").NPC:GetDescendants()
+for i,v in pairs(assing) do
+if v and v.ClassName == "Part" and v.Name == "HumanoidRootPart" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position)
+end
+end
+end)
+
+ass:Dropdown("Floors",{"Floor 1","Floor 2","Floor 3","Floor 4","Floor 5","Floor 6","Floor 7","Floor 8","Floor 9","Floor 10","Floor 11","Floor 12","Floor 13","Floor 14","Floor 15","Floor 16","Floor 17","Floor 18","Floor 19", "Floor 20","Floor 21","Floor 22","Floor 23","Floor 24","Floor 25","Floor 26","Floor 27","Floor 28","Floor 29","Floor 30","Floor 31"}, function(tp)
+   if tp == "Floor 1" then
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 808.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 2" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 780.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 3" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 752.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 4" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 724.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 5" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 697.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 6" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 669.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 7" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 641.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 8" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 613.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 9" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 586.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 10" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 558.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 11" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 530.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 12" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 502.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 13" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 475.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 14" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 447.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 15" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 419.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 16" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 391.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 17" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 364.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 18" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 336.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 19" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 308.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 20" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 280.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 21" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 253.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 22" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 225.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 23" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 197.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 24" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 169.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 25" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 142.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 26" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 114.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 27" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 86.5625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 28" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 58.8125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 29" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, 31.0625, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 30" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-13.6773758, 3.3125, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+   elseif tp == "Floor 31" then
+      game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-85.3023758, -24.4375, 109.199821, 0, 0, 1, 0, 1, -0, -1, 0, 0)
     end
-end
-for i, e in pairs(l:GetChildren()) do
-    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
-        e.Enabled = false
+end)
+
+ass:Button("Teleport to player", function()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[testvalue].Character.HumanoidRootPart.CFrame 
+end)
+
+ass:Dropdown("Choose Player", playerlist, function(sup)
+    testvalue = sup
+    game.Players.PlayerAdded:Connect(function(player)
+    local name = player.Name
+    table.insert(playerlist,name)
+    drop:Refresh(playerlist)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    local name = player.Name
+    for i,v in pairs(playerlist)do
+        if v == name then  
+            table.remove(playerlist,i)
+        end
     end
-end
+    drop:Refresh(playerlist)
+end)
 end)
 
-section2:addButton("ChatSpy", function()
-    -- not mine
-    --This script reveals ALL hidden messages in the default chat
---chat "/MagmaHacks" to toggle!
-enabled = true
---if true will check your messages too
-spyOnMyself = false
---if true will chat the logs publicly (fun, risky)
-public = false
---if true will use /me to stand out
-publicItalics = true
---customize private logs
-privateProperties = {
-	Color = Color3.fromRGB(0,255,255); 
-	Font = Enum.Font.SourceSansBold;
-	TextSize = 18;
-}
---////////////////////////////////////////////////////////////////
-local StarterGui = game:GetService("StarterGui")
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait() or Players.LocalPlayer
-local saymsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
-local getmsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("OnMessageDoneFiltering")
-local instance = (_G.chatSpyInstance or 0) + 1
-_G.chatSpyInstance = instance
+local set = win:Tab("Settings")
 
-local function onChatted(p,msg)
-	if _G.chatSpyInstance == instance then
-		if p==player and msg:lower():sub(1,4)=="/MagmaHacks" then
-			enabled = not enabled
-			wait(0.3)
-			privateProperties.Text = "{SPY "..(enabled and "EN" or "DIS").."ABLED}"
-			StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
-		elseif enabled and (spyOnMyself==true or p~=player) then
-			msg = msg:gsub("[\n\r]",''):gsub("\t",' '):gsub("[ ]+",' ')
-			local hidden = true
-			local conn = getmsg.OnClientEvent:Connect(function(packet,channel)
-				if packet.SpeakerUserId==p.UserId and packet.Message==msg:sub(#msg-#packet.Message+1) and (channel=="All" or (channel=="Team" and public==false and Players[packet.FromSpeaker].Team==player.Team)) then
-					hidden = false
-				end
-			end)
-			wait(1)
-			conn:Disconnect()
-			if hidden and enabled then
-				if public then
-					saymsg:FireServer((publicItalics and "/me " or '').."{SPY} [".. p.Name .."]: "..msg,"All")
-				else
-					privateProperties.Text = "{SPY} [".. p.Name .."]: "..msg
-					StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
-				end
-			end
-		end
-	end
-end
-
-for _,p in ipairs(Players:GetPlayers()) do
-	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
-end
-Players.PlayerAdded:Connect(function(p)
-	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
-end)
-privateProperties.Text = "{SPY "..(enabled and "EN" or "DIS").."ABLED}"
-StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
-if not player.PlayerGui:FindFirstChild("Chat") then wait(3) end
-local chatFrame = player.PlayerGui.Chat.Frame
-chatFrame.ChatChannelParentFrame.Visible = true
-chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Position+UDim2.new(UDim.new(),chatFrame.ChatChannelParentFrame.Size.Y)
+set:Colorpicker("UI Color",Color3.fromRGB(44, 120, 224), function(t)
+lib:ChangePresetColor(Color3.fromRGB(t.R * 255, t.G * 255, t.B * 255))
 end)
 
-local Settings = venyx:addPage("Settings", 0)
-local abc = Settings:addSection("KeyBind")
-abc:addKeybind("Open/Close KeyBind", Enum.KeyCode.LeftAlt, function()
-    venyx:toggle()
+set:Button("Delete UI", function()
+    game:GetService("CoreGui")["ui"]:Destroy()
 end)
 
-abc:addButton("Delete Gui" , function()
-    game:GetService("CoreGui")["The Lift Gui"]:Destroy();
+set:Button("Credits", function()
+    lib:Notification("Made by", "Boi#5676", "Close")
 end)
-
-venyx:SelectPage(venyx.pages[1], true)
