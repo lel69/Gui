@@ -1,0 +1,46 @@
+function library:New(name) 
+	local menu = {} 
+
+	local Ova = INST("ScreenGui") 
+	local Menu = INST("ImageLabel") 
+	local TextLabel = INST("TextLabel") 
+	local TabButtons = INST("Frame") 
+	local UIListLayout = INST("UIListLayout") 
+	local Tabs = INST("Frame") 
+    
+
+	Ova.Name = "sware ;)" 
+	Ova.ResetOnSpawn = false 
+	Ova.ZIndexBehavior = "Global" 
+	Ova.DisplayOrder = 420133769 
+
+	local UIScale = INST("UIScale") 
+	UIScale.Parent = Ova 
+
+	function menu:SetScale(scale) 
+		UIScale.Scale = scale 
+	end 
+
+	local but = INST("TextButton") 
+	but.Modal = true 
+	but.Text = "" 
+	but.BackgroundTransparency = 1 
+	but.Parent = Ova 
+
+	local cursor = INST("ImageLabel") 
+	cursor.Name = "cursor" 
+	cursor.Parent = Ova 
+	cursor.BackgroundTransparency = 1 
+	cursor.Size = UDIM2(0,17,0,17) 
+	cursor.Image = "rbxassetid://518398610" 
+	cursor.ZIndex = 1000 
+	cursor.ImageColor3 = COL3RGB(255,255,255) 
+
+	local Players = game:GetService("Players") 
+	local LocalPlayer = Players.LocalPlayer 
+	local Mouse = LocalPlayer:GetMouse() 
+
+	game:GetService("RunService").RenderStepped:connect(function() 
+		cursor.Visible = Ova.Enabled 
+		cursor.Position = UDIM2(0,Mouse.X-3,0,Mouse.Y+1) 
+	end) 
