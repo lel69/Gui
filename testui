@@ -29,25 +29,6 @@ local TBLFIND = table.find
 local TBLREMOVE = table.remove 
 local TBLSORT = table.sort 
 
--- i see those pastes lying around
-
-function rgbtotbl(rgb) 
-	return {R = rgb.R, G = rgb.G, B = rgb.B} 
-end 
-function tbltorgb(tbl) 
-	return COL3(tbl.R, tbl.G, tbl.B) 
-end 
-local function deepCopy(original) 
-	local copy = {} 
-	for k, v in pairs(original) do 
-		if type(v) == "table" then 
-			v = deepCopy(v) 
-		end 
-		copy[k] = v 
-	end 
-	return copy 
-end 
-
 function library:New(name) 
 	local menu = {} 
 
@@ -4119,4 +4100,4 @@ function library:New(name)
 	Ova.Parent = game.CoreGui 
 
 	return menu 
-end 
+end
