@@ -1,3 +1,5 @@
+local INST = Instance.new 
+
 function library:New(name) 
 	local menu = {} 
 
