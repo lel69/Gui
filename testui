@@ -43,7 +43,7 @@ function library:New(name)
 	local Tabs = INST("Frame") 
     
 
-	Ova.Name = "sware ;)" 
+	Ova.Name = "a1mls0139mg29jgn29" 
 	Ova.ResetOnSpawn = false 
 	Ova.ZIndexBehavior = "Global" 
 	Ova.DisplayOrder = 420133769 
