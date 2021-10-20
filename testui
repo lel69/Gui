@@ -1,6 +1,16 @@
+local Signal = loadstring(game:HttpGet("https://raw.githubusercontent.com/Quenty/NevermoreEngine/version2/Modules/Shared/Events/Signal.lua"))()
+local ConfigSave = Signal.new("ConfigSave") 
+local ConfigLoad = Signal.new("ConfigLoad") 
+
+
 local txt = game:GetService("TextService") 
 local TweenService = game:GetService("TweenService") 
+function library:Tween(...) TweenService:Create(...):Play() end 
+local cfglocation = "swarecfg/" 
+makefolder("swarecfg") 
 
+
+-- caching 
 local Vec2 = Vector2.new 
 local Vec3 = Vector3.new 
 local CF = CFrame.new 
@@ -31,6 +41,53 @@ local INSERT = table.insert
 local TBLFIND = table.find 
 local TBLREMOVE = table.remove 
 local TBLSORT = table.sort 
+
+-- i see those pastes lying around
+																																																																												-- Bad 9672 & WetIDreamz 0001 & zeox 9999												
+
+function rgbtotbl(rgb) 
+	return {R = rgb.R, G = rgb.G, B = rgb.B} 
+end 
+function tbltorgb(tbl) 
+	return COL3(tbl.R, tbl.G, tbl.B) 
+end 
+local function deepCopy(original) 
+	local copy = {} 
+	for k, v in pairs(original) do 
+		if type(v) == "table" then 
+			v = deepCopy(v) 
+		end 
+		copy[k] = v 
+	end 
+	return copy 
+end 
+function library:ConfigFix(cfg) 
+	local copy = game:GetService("HttpService"):JSONDecode(readfile(cfglocation..cfg..".txt")) 
+	for i,Tabs in pairs(copy) do 
+		for i,Sectors in pairs(Tabs) do 
+			for i,Elements in pairs(Sectors) do 
+				if Elements.Color ~= nil then 
+					local a = Elements.Color 
+					Elements.Color = tbltorgb(a) 
+				end 
+			end 
+		end 
+	end 
+	return copy 
+end 
+function library:SaveConfig(cfg) 
+	local copy = deepCopy(values) 
+	for i,Tabs in pairs(copy) do 
+		for i,Sectors in pairs(Tabs) do 
+			for i,Elements in pairs(Sectors) do 
+				if Elements.Color ~= nil then 
+					Elements.Color = {R=Elements.Color.R, G=Elements.Color.G, B=Elements.Color.B} 
+				end 
+			end 
+		end 
+	end 
+	writefile(cfglocation..cfg..".txt", game:GetService("HttpService"):JSONEncode(copy)) 
+end 
 
 function library:New(name) 
 	local menu = {} 
