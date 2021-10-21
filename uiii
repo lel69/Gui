@@ -4159,32 +4159,3 @@ function library:New(name)
 
 	return menu 
 end
-
-
-
-
-local gui = library:New("")
-local legit = gui:Tab("legit") 
-local rage = gui:Tab("rage") 
-local visuals = gui:Tab("visuals") 
-local misc = gui:Tab("misc") 
-local skins = gui:Tab("skins") 
-local luas = gui:Tab("luas")
-
-
-
-
-local aimbot = rage:Sector("aimbot", "Left")
-aimbot:Element("Toggle", "enabled")
-aimbot:Element("Dropdown", "origin", {options = {"character", "camera"}})
-aimbot:Element("Toggle", "silent aim")
-aimbot:Element("Dropdown", "automatic fire", {options = {"off", "standard", "hitpart"}})
-aimbot:Element("Toggle", "automatic penetration")
-aimbot:Element("Jumbobox", "resolver", {options = {"pitch", "roll"}}) 
-aimbot:Element("Toggle", "delay shot")
-aimbot:Element("Toggle", "force hit")
-aimbot:Element("Dropdown", "prediction", {options = {"off", "cframe", "velocity"}})
-aimbot:Element("Toggle", "teammates")
-aimbot:Element("Toggle", "auto baim")
-aimbot:Element("Toggle", "knifebot")
-aimbot:Element("Toggle", "sex package") 
