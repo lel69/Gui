@@ -3526,7 +3526,7 @@ function library:CreateWindow(name, hidebutton)
             return configSystem
         end
 
-    	function lib:ChangePresetColor(toch)
+    	function library:ChangePresetColor(toch)
              accentcolor = toch
    	 end
 
