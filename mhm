@@ -3526,6 +3526,10 @@ function library:CreateWindow(name, hidebutton)
             return configSystem
         end
 
+    	function lib:ChangePresetColor(toch)
+             accentcolor = toch
+   	 end
+
         function tab:CreatePlayerlist(name)
             local list = { }
             list.name = name or ""
